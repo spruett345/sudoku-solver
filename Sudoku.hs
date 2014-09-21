@@ -1,5 +1,6 @@
 module Main where
 
+import System.IO
 import Data.Ord (comparing)
 import Data.List ((\\))
 import Data.Char (intToDigit, digitToInt)
@@ -136,5 +137,6 @@ main = do
     case solve board of
         [] -> putStrLn "No solution"
         (sln:_) -> putStrLn $ prettyBoard sln
-        
-    main
+    eof <- hIsEOF stdin
+    unless eof $
+        main
