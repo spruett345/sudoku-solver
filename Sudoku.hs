@@ -6,13 +6,13 @@ import Data.List ((\\))
 import Data.Char (intToDigit, digitToInt)
 import Data.Maybe (isNothing)
 import qualified Data.Vector as V
-import qualified Data.BitSet.Word as S
+import qualified Data.Set as S
 import qualified Data.Vector.Mutable as MV
 
 import Control.Monad
 import Control.Monad.ST
 
-type Board = V.Vector (S.BitSet Int)
+type Board = V.Vector (S.Set Int)
 
 
 readBoard :: String -> Board
@@ -71,7 +71,7 @@ validBoard = isNothing . V.find S.null
 constraintProp :: Board -> Board
 constraintProp = V.modify inplaceProp
 
-inplaceProp :: MV.STVector a (S.BitSet Int) -> ST a ()
+inplaceProp :: MV.STVector a (S.Set Int) -> ST a ()
 inplaceProp v = do
     checked <- MV.replicate 81 False
     update checked 0 False
