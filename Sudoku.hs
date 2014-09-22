@@ -59,6 +59,12 @@ currentBlock i = do
     let pairs = (xs, ys)
     return $ toIndex pairs
 
+neighbors :: V.Vector (V.Vector Int)
+neighbors = V.map edges $ V.fromList [0..80]
+  where
+    edges i =
+        V.fromList $ currentColumn i ++ currentRow i ++ currentBlock i
+        
 validBoard :: Board -> Bool
 validBoard = isNothing . V.find S.null
 
@@ -71,7 +77,7 @@ inplaceProp v = do
     update checked 0 False
     where
       diffAll set indices = 
-          forM_ indices $ \i -> do
+          V.forM_ indices $ \i -> do
               s <- MV.read v i
               MV.write v i (S.difference s set)
 
@@ -84,9 +90,7 @@ inplaceProp v = do
               update checked (i + 1) done
           else do
               MV.write checked i True
-              diffAll set (currentRow i)
-              diffAll set (currentColumn i)
-              diffAll set (currentBlock i)
+              diffAll set $ neighbors V.! i
               update checked (i + 1) True
 
 solved :: Board -> Bool
@@ -137,6 +141,6 @@ main = do
     case solve board of
         [] -> putStrLn "No solution"
         (sln:_) -> putStrLn $ prettyBoard sln
-    eof <- hIsEOF stdin
+    eof <- isEOF
     unless eof $
         main
